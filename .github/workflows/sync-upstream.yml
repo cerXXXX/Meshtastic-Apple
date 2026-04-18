@@ -1,0 +1,55 @@
+name: Sync with upstream
+
+on:
+  schedule:
+    # Запуск каждый день в 06:00 UTC. Поменяйте под себя.
+    - cron: '0 6 * * *'
+  workflow_dispatch: # + кнопка ручного запуска в GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Полная история для мержа
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/meshtastic/Meshtastic-Apple.git
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Check if update needed
+        id: check
+        run: |
+          LOCAL=$(git rev-parse HEAD)
+          REMOTE=$(git rev-parse upstream/main)
+          if [ "$LOCAL" = "$REMOTE" ]; then
+            echo "Upstream has no new commits. Nothing to do."
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "Upstream is ahead. Proceeding with merge."
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge upstream (prefer upstream on conflicts)
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          git checkout main
+          # -X theirs = при конфликте берём версию из upstream
+          git merge upstream/main -X theirs --no-edit
+
+      - name: Push merged changes
+        if: steps.check.outputs.needs_update == 'true'
+        run: git push origin main
