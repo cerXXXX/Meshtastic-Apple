@@ -5,10 +5,10 @@ import SwiftProtobuf
 import MapKit
 import DatadogCore
 import OSLog
+import SwiftData
 
 struct AppSettings: View {
 	private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
-	@Environment(\.modelContext) private var context
 	@EnvironmentObject var accessoryManager: AccessoryManager
 	@State var totalDownloadedTileSize = ""
 	@State private var isPresentingCoreDataResetConfirm = false
@@ -20,7 +20,18 @@ struct AppSettings: View {
 	@AppStorage("environmentEnableWeatherKit") private var  environmentEnableWeatherKit: Bool = true
 	@AppStorage("enableAdministration") private var  enableAdministration: Bool = false
 	@AppStorage("usageDataAndCrashReporting") private var usageDataAndCrashReporting: Bool = true
-	
+	// Node Layout Preferences
+	@AppStorage("nodeListDensity") private var nodeListDensity: NodeListDensity = .standard
+	@AppStorage(NodeListPreferences.shouldShowLocation.rawValue) private var shouldShowLocation = true
+	@AppStorage(NodeListPreferences.shouldShowPower.rawValue) private var shouldShowPower = true
+	@AppStorage(NodeListPreferences.shouldShowTelemetry.rawValue) private var shouldShowTelemetry = true
+	@AppStorage(NodeListPreferences.shouldShowLastHeard.rawValue) private var shouldShowLastHeard = true
+	@AppStorage(NodeListPreferences.lastHeardIsRelative.rawValue) private var lastHeardIsRelative = false
+	@AppStorage(NodeListPreferences.shouldShowRole.rawValue) private var shouldShowRole = true
+	@AppStorage(NodeListPreferences.shouldShowChannel.rawValue) private var shouldShowChannel = true
+	@AppStorage(NodeListPreferences.shouldShowHops.rawValue) private var shouldShowHops = true
+	@AppStorage(NodeListPreferences.shouldShowSignal.rawValue) private var shouldShowSignal = true
+
 	let autoconnectBinding = Binding<Bool>(get: {
 		return UserDefaults.autoconnectOnDiscovery
 	}, set: { newValue in
@@ -70,6 +81,52 @@ struct AppSettings: View {
 					}
 #endif
 				}
+				Section(header: Text("Node Layout")) {
+					List {
+						Picker("Node List Density", selection: $nodeListDensity.animation()) {
+							ForEach(NodeListDensity.allCases) { item in
+								Text(item.description).tag(item)
+							}
+						}
+						.pickerStyle(.segmented)
+						if nodeListDensity == .compact {
+							Toggle(isOn: $shouldShowPower) {
+								Text("Power")
+							}
+							Toggle(isOn: $shouldShowLastHeard.animation()) {
+								Text("Last Heard Time")
+							}
+							Toggle(isOn: $lastHeardIsRelative) {
+								Text("Relative Last Heard Time")
+							}
+							.disabled(!shouldShowLastHeard)
+							Toggle(isOn: $shouldShowLocation) {
+								Text("Distance and Bearing")
+							}
+							Toggle(isOn: $shouldShowHops) {
+								Text("Hops Away")
+							}
+							Toggle(isOn: $shouldShowSignal) {
+								Text("Signal (Direct Only)")
+							}
+							Toggle(isOn: $shouldShowChannel) {
+								Text("Channel")
+							}
+							Toggle(isOn: $shouldShowRole) {
+								Text("Device Role")
+							}
+							Toggle(isOn: $shouldShowTelemetry) {
+								Text("Log Icons")
+							}
+						}
+						if nodeListDensity == .standard {
+							Text("The Complete layout displays all available node data. Fields with no data are automatically hidden.")
+								.font(.footnote)
+								.foregroundStyle(.secondary)
+						}
+						BuildTestNode(nodeListDensity: $nodeListDensity)
+					}
+				}
 				Section(header: Text("Environment")) {
 					VStack(alignment: .leading) {
 						Toggle(isOn: $environmentEnableWeatherKit) {
@@ -97,7 +154,7 @@ struct AppSettings: View {
 						}
 #endif
 					}
-					.onChange(of: usageDataAndCrashReporting) { _, newUsageDataAndCrashReporting in
+					.onChange(of: usageDataAndCrashReporting) { oldUsageDataAndCrashReporting, newUsageDataAndCrashReporting in
 						if !newUsageDataAndCrashReporting {
 							Datadog.set(trackingConsent: .notGranted)
 						}
@@ -161,12 +218,6 @@ struct AppSettings: View {
 								}
 								await PersistenceController.shared.clearDatabase(includeRoutes: true)
 								clearNotifications()
-								try? await MeshtasticAPI.shared.refreshDevicesAPIData()
-							}
-							Task { @MainActor in
-								await MeshPackets.shared.clearDatabase(includeRoutes: true)
-								clearNotifications()
-								try? await MeshtasticAPI.shared.refreshDevicesAPIData()
 							}
 						}
 					}
@@ -184,5 +235,36 @@ struct AppSettings: View {
 								ZStack {
 			ConnectedDevice(deviceConnected: accessoryManager.isConnected, name: accessoryManager.activeConnection?.device.shortName ?? "?")
 		})
+	}
+}
+
+struct BuildTestNode: View {
+	@Query(sort: \NodeInfoEntity.lastHeard, order: .reverse)
+	private var nodes: [NodeInfoEntity]
+	@Binding var nodeListDensity: NodeListDensity
+	
+	init(nodeListDensity: Binding<NodeListDensity>) {
+		self._nodeListDensity = nodeListDensity
+	}
+
+	var body: some View {
+		VStack {
+			if let exampleNode = nodes.first {
+				switch nodeListDensity {
+				case .standard:
+					NodeListItem(
+						node: exampleNode,
+						isDirectlyConnected: true,
+						connectedNode: 0,
+					)
+				case .compact:
+					NodeListItemCompact(
+						node: exampleNode,
+						isDirectlyConnected: true,
+						connectedNode: 0
+					)
+				}
+			}
+		}
 	}
 }

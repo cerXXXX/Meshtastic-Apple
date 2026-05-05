@@ -82,12 +82,77 @@ struct NodeListHelp: View {
 					)
 					HelpItem(
 						symbol: AnyView(
-							Image(systemName: "cellularbars")
+							Image(systemName: "2.circle.fill")
 								.font(.title3)
 								.foregroundColor(.accentColor)
 						),
-						title: String(localized: "Signal Metrics"),
-						subtitle: String(localized: "SNR and RSSI values indicating the radio signal quality between nodes.")
+						title: String(localized: "Channel"),
+						subtitle: String(localized: "The numbered circle indicates which channel the node is using. Only shown when the node is on a secondary channel (not the primary channel 0).")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "dot.radiowaves.left.and.right")
+								.font(.title3)
+								.foregroundColor(.green)
+						),
+						title: String(localized: "Signal: Good"),
+						subtitle: String(localized: "SNR is above the limit for the current modem preset. Strong, reliable signal.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "dot.radiowaves.left.and.right")
+								.font(.title3)
+								.foregroundColor(.yellow)
+						),
+						title: String(localized: "Signal: Fair"),
+						subtitle: String(localized: "SNR is slightly below the modem preset limit. Connection may be intermittent.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "dot.radiowaves.left.and.right")
+								.font(.title3)
+								.foregroundColor(.orange)
+						),
+						title: String(localized: "Signal: Bad"),
+						subtitle: String(localized: "SNR is well below the modem preset limit. Expect packet loss and unreliable delivery.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "dot.radiowaves.left.and.right")
+								.font(.title3)
+								.foregroundColor(.red)
+						),
+						title: String(localized: "Signal: Very Bad"),
+						subtitle: String(localized: "SNR is far below the modem preset limit. Communication is unlikely at this signal level.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Gauge(value: 2.0, in: 0...3) {
+							}
+							.gaugeStyle(.accessoryLinear)
+							.tint(Gradient(colors: [.red, .orange, .yellow, .green]))
+							.frame(width: 32)
+						),
+						title: String(localized: "Signal Strength Meter"),
+						subtitle: String(localized: "The gradient bar in the Complete layout shows overall signal quality from red (no signal) through orange, yellow, to green (good signal). It combines SNR and RSSI relative to your modem preset.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "flipphone")
+								.font(.title3)
+								.foregroundColor(.accentColor)
+						),
+						title: String(localized: "Device Metrics"),
+						subtitle: String(localized: "Battery level, voltage, channel utilization, and airtime reported by the node.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "mappin.and.ellipse")
+								.font(.title3)
+								.foregroundColor(.accentColor)
+						),
+						title: String(localized: "Positions"),
+						subtitle: String(localized: "GPS position data reported by the node including latitude, longitude, and altitude.")
 					)
 					HelpItem(
 						symbol: AnyView(
@@ -95,14 +160,32 @@ struct NodeListHelp: View {
 								.font(.title3)
 								.foregroundColor(.accentColor)
 						),
-						title: String(localized: "Telemetry"),
-						subtitle: String(localized: "Sensor data such as battery level, voltage, temperature, and humidity reported by the node.")
+						title: String(localized: "Environment"),
+						subtitle: String(localized: "Sensor data such as temperature, humidity, and barometric pressure reported by the node.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "sensor")
+								.font(.title3)
+								.foregroundColor(.accentColor)
+						),
+						title: String(localized: "Detection Sensor"),
+						subtitle: String(localized: "Detection sensor events reported by the node, such as motion or door open/close alerts.")
+					)
+					HelpItem(
+						symbol: AnyView(
+							Image(systemName: "signpost.right.and.left")
+								.font(.title3)
+								.foregroundColor(.accentColor)
+						),
+						title: String(localized: "Trace Routes"),
+						subtitle: String(localized: "Recorded trace route paths showing the hops a message took through the mesh to reach this node.")
 					)
 					Link(destination: URL(string: "https://meshtastic.org/docs/configuration/radio/device/")!) {
 						Label("Device Configuration Docs", systemImage: "doc.text")
 					}
 				} header: {
-					Text("Node Details")
+					Text("Logs")
 				}
 			}
 			.navigationTitle("Node List Help")
