@@ -231,7 +231,7 @@
             "geojson",
             "from"
         ],
-        "charCount": 1721
+        "charCount": 1703
     },
     {
         "id": "messages",
@@ -239,14 +239,14 @@
         "section": "user",
         "navOrder": 3,
         "keywords": [
-            "key",
             "channel",
+            "key",
             "channels",
-            "not",
             "messages",
+            "not",
+            "message",
             "public",
             "node",
-            "message",
             "destination",
             "meaning",
             "location",
@@ -257,6 +257,7 @@
             "encrypted",
             "data",
             "uses",
+            "recent",
             "primary",
             "press",
             "precise",
@@ -267,10 +268,9 @@
             "delivery",
             "broadcast",
             "used",
-            "use",
-            "their"
+            "use"
         ],
-        "charCount": 3365
+        "charCount": 3579
     },
     {
         "id": "mqtt",
@@ -746,14 +746,15 @@
         "section": "developer",
         "navOrder": 7,
         "keywords": [
+            "meshtastic",
             "docs",
             "swiftlint",
-            "meshtastic",
             "update",
             "length",
             "scripts",
             "protobufs",
             "guard",
+            "documentation",
             "commit",
             "changes",
             "all",
@@ -761,23 +762,22 @@
             "tests",
             "subject",
             "release",
+            "org",
             "only",
             "new",
             "ios",
             "github",
-            "documentation",
             "deep",
             "body",
+            "apple",
             "app",
             "xcode",
             "use",
             "uikit",
             "type",
-            "submodule",
-            "settings",
-            "resources"
+            "submodule"
         ],
-        "charCount": 2823
+        "charCount": 2937
     },
     {
         "id": "deep-links",
@@ -808,15 +808,15 @@
             "usernum",
             "user",
             "urls",
+            "tools",
             "telemetry",
             "swift",
             "serial",
             "security",
             "routes",
-            "route",
-            "ringtone"
+            "route"
         ],
-        "charCount": 2794
+        "charCount": 2908
     },
     {
         "id": "swiftdata",
@@ -826,36 +826,36 @@
         "keywords": [
             "context",
             "model",
+            "packet",
             "var",
-            "schema",
-            "swift",
-            "self",
-            "meshtasticschemav2",
+            "save",
             "data",
             "type",
-            "static",
-            "shared",
-            "persistencecontroller",
+            "swift",
+            "schema",
+            "nodeinfoentity",
+            "app",
+            "writes",
+            "use",
+            "self",
             "new",
+            "modelcontext",
+            "meshtasticschemav2",
+            "unique",
+            "static",
+            "sqlite",
+            "shared",
+            "position",
+            "persistencecontroller",
+            "persistence",
+            "per",
             "modelcontainer",
             "migration",
             "meshtastic",
             "main",
-            "let",
-            "view",
-            "version",
-            "use",
-            "types",
-            "swiftdata",
-            "query",
-            "persistence",
-            "packet",
-            "nodeinfoentity",
-            "modelcontext",
-            "helpers",
-            "actor"
+            "let"
         ],
-        "charCount": 3284
+        "charCount": 5641
     },
     {
         "id": "testing",
@@ -863,9 +863,10 @@
         "section": "developer",
         "navOrder": 6,
         "keywords": [
-            "quot",
             "test",
+            "quot",
             "tests",
+            "snapshots",
             "run",
             "let",
             "use",
@@ -891,10 +892,9 @@
             "using",
             "try",
             "suite",
-            "snapshots",
-            "scale"
+            "screenshots"
         ],
-        "charCount": 3514
+        "charCount": 3738
     },
     {
         "id": "transport",
