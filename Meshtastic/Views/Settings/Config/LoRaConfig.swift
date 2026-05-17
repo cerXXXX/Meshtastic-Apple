@@ -132,7 +132,7 @@ struct LoRaConfig: View {
 						 Picker("Coding Rate", selection: $codingRate) {
 							 ForEach(5..<9) {
 								 Text("\($0)")
-									 .tag($0 == 8 ? 0 : $0)
+									 .tag($0)
 							 }
 						 }
 					 }
@@ -180,7 +180,7 @@ struct LoRaConfig: View {
 				HStack {
 					Image(systemName: "antenna.radiowaves.left.and.right")
 						.foregroundColor(.accentColor)
-					Stepper("\(txPower)dBm Transmit Power", value: $txPower, in: 1...30, step: 1)
+					Stepper(txPower == 0 ? "Max Transmit Power" : "\(txPower)dBm Transmit Power", value: $txPower, in: 0...30, step: 1)
 						.padding(5)
 				}
 			}
@@ -290,7 +290,7 @@ struct LoRaConfig: View {
 			if newOverrideFrequency != node?.loRaConfig?.overrideFrequency { hasChanges = true }
 		}
 		.onChange(of: txPower) { _, newTxPower in
-			if newTxPower != node?.loRaConfig?.txPower ?? -1 { hasChanges = true }
+			if Int32(newTxPower) != node?.loRaConfig?.txPower { hasChanges = true }
 		}
 		.onChange(of: txEnabled) { _, newTxEnabled in
 			if newTxEnabled != node?.loRaConfig?.txEnabled { hasChanges = true }
@@ -314,7 +314,8 @@ struct LoRaConfig: View {
 		self.txPower = Int(node?.loRaConfig?.txPower ?? 0)
 		self.channelNum = Int(node?.loRaConfig?.channelNum ?? 0)
 		self.bandwidth = Int(node?.loRaConfig?.bandwidth ?? 0)
-		self.codingRate = Int(node?.loRaConfig?.codingRate ?? 0)
+		let loadedCodingRate = Int(node?.loRaConfig?.codingRate ?? 0)
+		self.codingRate = loadedCodingRate == 0 ? 5 : loadedCodingRate
 		self.spreadFactor = Int(node?.loRaConfig?.spreadFactor ?? 0)
 		self.rxBoostedGain = node?.loRaConfig?.sx126xRxBoostedGain ?? false
 		self.overrideFrequency = node?.loRaConfig?.overrideFrequency ?? 0.0
